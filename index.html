@@ -206,14 +206,13 @@ body.light .pb{background:#dbe4ff}
   <button class="save" id="saveBtn">💾 <span data-i="save">Save</span></button>
  </div>
 
- 
  <div id="modal"><div class="mb"><button class="x" id="mX">✕</button><div class="mi" id="mIcon">⚠️</div><h3 id="mTitle"></h3><p id="mMsg"></p><small id="mSub"></small><div class="mbtn"><button class="c" id="mCancel" data-i="cancel">Cancel</button><button class="o" id="mOk" data-i="ok">OK</button></div></div></div>
  <div id="toast"><div class="k" id="tIcon">✓</div><div><b id="tTitle"></b><p id="tMsg"></p></div><button id="tX">✕</button></div>
 
  </div>
 
 <script>
-const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const SUBJ={English:['📖','#7c3aed'],Maths:['🧮','#2563eb'],Gs:['🌐','#16a34a'],Amharic:['📙','#f59e0b'],ICT:['🖥️','#0ea5e9'],Citizen:['👥','#db2777'],Geography:['🌍','#22c55e'],CTE:['⚙️','#6d5dfc'],Hp:['❤️','#e11d48'],ART:['🎨','#14b8a6']};
 const EM=['መስከረም','ጥቅምት','ኅዳር','ታኅሣሥ','ጥር','የካቲት','መጋቢት','ሚያዝያ','ግንቦት','ሰኔ','ሐምሌ','ነሐሴ','ጳጉሜ'];
 const PAL=['rgba(255,255,255,.45)','rgba(52,211,153,.6)','rgba(250,204,21,.55)','rgba(244,114,182,.55)','rgba(96,165,250,.6)','rgba(167,139,250,.6)'];
@@ -229,7 +228,7 @@ data.forEach(x=>{if(x.note===undefined)x.note=''});
 const save=()=>{try{localStorage.setItem('sk_schedules',JSON.stringify(data))}catch(e){}};
 const pad=n=>String(n).padStart(2,'0');
 const iso=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
-const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function eth(isoStr){const [y,m,d]=isoStr.split('-').map(Number);const jdn=Math.floor(Date.UTC(y,m-1,d)/864e5)+2440588;
  const r=(jdn-1723856)%1461,n=r%365+365*Math.floor(r/1460);
  const yr=4*Math.floor((jdn-1723856)/1461)+Math.floor(r/365)-Math.floor(r/1460);
@@ -280,27 +279,14 @@ function render(){
  }
  m.scrollTop=sc;
 }
-function tick(){const n=new Date(),c=$('#clk'),g=$('#gd');
- if(c)c.innerHTML=pad(n.getHours())+' : '+pad(n.getMinutes())+' <small>: '+pad(n.getSeconds())+'</small>';
- if(g)g.textContent=n.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'})}
-setInterval(tick,1000);
-function go(x){tab=x;$$('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===x));render();$('#main').scrollTop=0}
-$$('nav button').forEach(b=>b.onclick=()=>go(b.dataset.t));
+function tick(){const n=new Date(),c=$('#clk'),g=$('#gd'); if(c)c.innerHTML=pad(n.getHours())+' : '+pad(n.getMinutes())+' <small>: '+pad(n.getSeconds())+'</small>'; if(g)g.textContent=n.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'})} setInterval(tick,1000); function go(x){tab=x;$$('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===x));render();$('#main').scrollTop=0} $$('nav button').forEach(b=>b.onclick=()=>go(b.dataset.t));
 
 function toggle(id){const x=data.find(y=>y.id==id);if(!x)return;
  if(x.done)confirmBox(t('unMsg'),()=>{x.done=false;save();render()});
  else{x.done=true;save();render()}}
 const M=$('#main');
 M.addEventListener('pointerdown',e=>{flag=false;const it=e.target.closest('.item');if(!it||e.target.closest('[data-ck],[data-del]'))return;
- lp=setTimeout(()=>{$$('.item.sel').forEach(i=>i.classList.remove('sel'));it.classList.add('sel');flag=true;navigator.vibrate&&navigator.vibrate(30)},500)});
-['pointerup','pointerleave','pointercancel'].forEach(ev=>M.addEventListener(ev,()=>clearTimeout(lp)));
-M.addEventListener('contextmenu',e=>e.preventDefault());
-M.onclick=e=>{
- if(flag){flag=false;return}
- const del=e.target.closest('[data-del]');
- if(del){const id=del.dataset.del;confirmBox(t('delMsg'),()=>{data=data.filter(x=>x.id!=id);save();render();toast(t('delT'),t('delM'))});return}
- const ck=e.target.closest('[data-ck]');if(ck){toggle(ck.dataset.ck);return}
- $$('.item.sel').forEach(i=>i.classList.remove('sel'))};
+ lp=setTimeout(()=>{$$('.item.sel').forEach(i=>i.classList.remove('sel'));it.classList.add('sel');flag=true;navigator.vibrate&&navigator.vibrate(30)},500)}); ['pointerup','pointerleave','pointercancel'].forEach(ev=>M.addEventListener(ev,()=>clearTimeout(lp))); M.addEventListener('contextmenu',e=>e.preventDefault()); M.onclick=e=>{ if(flag){flag=false;return} const del=e.target.closest('[data-del]'); if(del){const id=del.dataset.del;confirmBox(t('delMsg'),()=>{data=data.filter(x=>x.id!=id);save();render();toast(t('delT'),t('delM'))});return} const ck=e.target.closest('[data-ck]');if(ck){toggle(ck.dataset.ck);return} $$('.item.sel').forEach(i=>i.classList.remove('sel'))};
 
 /* popup: notifications & menu */
 function popHtml(k){
@@ -313,9 +299,7 @@ document.addEventListener('click',e=>{if(!e.target.closest('#pop,#bell,#menu'))c
 $('#bell').onclick=()=>openPop('n');$('#menu').onclick=()=>openPop('m');
 $('#pop').onclick=e=>{const l=e.target.closest('[data-l]');
  if(l){S.lang=l.dataset.l;saveS();applyLang();return}
- if(e.target.closest('#sw')){S.light=!S.light;saveS();applyTheme();$('#pop').innerHTML=popHtml('m')}};
-const applyTheme=()=>document.body.classList.toggle('light',!!S.light);
-function applyLang(){document.documentElement.lang=S.lang;$$('[data-i]').forEach(e=>e.textContent=t(e.dataset.i));
+ if(e.target.closest('#sw')){S.light=!S.light;saveS();applyTheme();$('#pop').innerHTML=popHtml('m')}}; const applyTheme=()=>document.body.classList.toggle('light',!!S.light); function applyLang(){document.documentElement.lang=S.lang;$$('[data-i]').forEach(e=>e.textContent=t(e.dataset.i));
  $('#fNote').placeholder=t('notePh');if(!picked)$('#subjTxt').textContent=t('subject');
  if($('#pop').classList.contains('on'))$('#pop').innerHTML=popHtml(popK);render()}
 
@@ -338,8 +322,16 @@ $('#saveBtn').onclick=()=>{
 };
 applyTheme();applyLang();
 </script>
+
+<!-- Service Worker Registration -->
 <script>
-if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg => console.log('SW Registered:', reg.scope))
+      .catch(err => console.log('SW Registration failed:', err));
+  });
+}
 </script>
 </body>
 </html>
