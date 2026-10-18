@@ -1,0 +1,16 @@
+{
+  "name": "SK Study Tracker",
+  "short_name": "SK",
+  "description": "Student homework and study schedule tracker",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#050b24",
+  "theme_color": "#050b24",
+  "lang": "am",
+  "icons": [
+    { "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ]
+}
